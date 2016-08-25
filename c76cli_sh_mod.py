@@ -79,8 +79,8 @@ for inSubDir in os.walk(inDir):
                     elif line.startswith("---"):
                         inBlock = True
                 data[node]["MODULE"].update({'nLC6704': nLC6704})
-                data[node].update({'nLC6748': nLC6748})
-                data[node].update({'nSUP720': nSUP720})
+                data[node]["MODULE"].update({'nLC6748': nLC6748})
+                data[node]["MODULE"].update({'nSUP720': nSUP720})
 
         elif inFileName.endswith(fileNameTypeSuffixCDP):
             with inFile as inData:
@@ -109,11 +109,11 @@ for inSubDir in os.walk(inDir):
                         if m:
                              nXSW0i += 1
 
-                data[node].update({'nCR03' : nCR03})
-                data[node].update({'nCR02' : nCR02})
-                data[node].update({'nSR0i' : nSR0i})
-                data[node].update({'nASR0i': nASR0i})
-                data[node].update({'nXSW0i': nXSW0i})
+                data[node]["CDP"].update({'nCR03' : nCR03})
+                data[node]["CDP"].update({'nCR02' : nCR02})
+                data[node]["CDP"].update({'nSR0i' : nSR0i})
+                data[node]["CDP"].update({'nASR0i': nASR0i})
+                data[node]["CDP"].update({'nXSW0i': nXSW0i})
 
 print(json.dumps(data, indent = 4))
 
