@@ -19,7 +19,9 @@ import shutil
 
 
 # DEFAULTS
-
+fileNameTypeSuffixVERSION = "show_version.txt"
+fileNameTypeSuffixMODULE = "show_module.txt"
+fileNameTypeSuffixHSRP = "show_standby.txt"
 
 # DATETIME
 start_time = time.time()
@@ -36,10 +38,10 @@ for inSubDir in os.walk(inDir):
     file = os.path.splitext(file)[0]
     node = file
     data[node] = {}
-    fileNameTypeSuffix = "show_version.txt"
+
     for inFileName in inSubDir[2]:
-        if inFileName.endswith(fileNameTypeSuffix):
-            inFile = open(pathFull + "/" + inFileName)
+        inFile = open(pathFull + "/" + inFileName)
+        if inFileName.endswith(fileNameTypeSuffixVERSION):
             with inFile as inData:
                 for rawline in inData:
                     line = rawline.strip()
@@ -47,8 +49,42 @@ for inSubDir in os.walk(inDir):
                         m = re.search('.* Version (\d\d\..*)\, .*', line)
                         if m:
                             version = m.group(1)
-                            data[node].update({'VERSION' : version})
-print data
+                            data[node].update({'VERSION': version})
+
+        elif inFileName.endswith(fileNameTypeSuffixMODULE):
+            with inFile as inData:
+                inBlock = False
+                iLineBlock = 0
+                nSUP720 = 0
+                nRSP720 = 0
+                nLC6704 = 0
+                nLC6748 = 0
+                for rawline in inData:
+                    line = rawline.strip()
+                    if inBlock:
+                        if line.startswith("Mod"):
+                            inBlock = False
+                            break
+                        else:
+                            iLineBlock += 1
+                            m = re.search('.*(WS-X6704.*)\s+.*', line)
+                            if m:
+                                nLC6704 += 1
+                            m = re.search('.*(WS-X6748.*)\s+.*', line)
+                            if m:
+                                nLC6748 += 1
+                            m = re.search('.*(WS-SUP720.*)\s+.*', line)
+                            if m:
+                                nSUP720 += 1
+                    elif line.startswith("---"):
+                        inBlock = True
+                data[node].update({'LC6704': nLC6704})
+                data[node].update({'LC6748': nLC6748})
+                data[node].update({'SUP720': nSUP720})
+
+print(json.dumps(data, indent = 4))
+
+
 
 
 
