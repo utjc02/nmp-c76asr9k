@@ -42,6 +42,8 @@ for inSubDir in os.walk(inDir):
 
     for inFileName in inSubDir[2]:
         inFile = open(pathFull + "/" + inFileName)
+
+        ## show version
         if inFileName.endswith(fileNameTypeSuffixVERSION):
             with inFile as inData:
                 for rawline in inData:
@@ -52,6 +54,7 @@ for inSubDir in os.walk(inDir):
                             version = m.group(1)
                             data[node].update({'VERSION': version})
 
+        ## show module
         elif inFileName.endswith(fileNameTypeSuffixMODULE):
             with inFile as inData:
                 data[node].update({"MODULE": {}})
@@ -82,6 +85,7 @@ for inSubDir in os.walk(inDir):
                 data[node]["MODULE"].update({'nLC6748': nLC6748})
                 data[node]["MODULE"].update({'nSUP720': nSUP720})
 
+        ## show cdp neighbor
         elif inFileName.endswith(fileNameTypeSuffixCDP):
             with inFile as inData:
                 data[node].update({"CDP": {}})
@@ -114,6 +118,26 @@ for inSubDir in os.walk(inDir):
                 data[node]["CDP"].update({'nSR0i' : nSR0i})
                 data[node]["CDP"].update({'nASR0i': nASR0i})
                 data[node]["CDP"].update({'nXSW0i': nXSW0i})
+
+        ## show standby
+        elif inFileName.endswith(fileNameTypeSuffixHSRP):
+            with inFile as inData:
+                data[node].update({"HSRP": {}})
+                nHSRPact = 0
+                nHSRPstb = 0
+                nHSRPall = 0
+                for rawline in inData:
+                    line = rawline.strip()
+                    if line.startswith("State is Active"):
+                        nHSRPact += 1
+                        nHSRPall += 1
+                    if line.startswith("State is Standby"):
+                        nHSRPstb += 1
+                        nHSRPall += 1
+
+                data[node]["HSRP"].update({'nHSRPact' : nHSRPact})
+                data[node]["HSRP"].update({'nHSRPstb' : nHSRPstb})
+                data[node]["HSRP"].update({'nHSRPall' : nHSRPall})
 
 print(json.dumps(data, indent = 4))
 
