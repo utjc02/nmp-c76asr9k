@@ -29,12 +29,15 @@ nowDate = now.strftime("%Y%m%d")
 inFile = open(inFileName)
 data = {}
 
-inDir = '../RawInv50-cli'
+inDir = '/Users/dzarudni/Documents/csco/CUST/mgts/tasks/2016-08-15 -- Migration76-ASR9k/RawInv50-cli'
 
 for inSubDir in os.walk(inDir):
-    path, file = os.path.split(inSubDir[1])
-    file = os.path.splitext(file)[1]
+    path, file = os.path.split(inSubDir[0])
+    file = os.path.splitext(file)[0]
     print 'Dir: ' + file
+    for inFile in inSubDir[2]:
+        print ' File:' + inFile
+
 
 
 
