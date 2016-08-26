@@ -14,6 +14,7 @@ import re
 import time
 import datetime
 import json
+import xlwt
 import gzip
 import shutil
 
@@ -139,9 +140,43 @@ for inSubDir in os.walk(inDir):
                 data[node]["HSRP"].update({'nHSRPstb' : nHSRPstb})
                 data[node]["HSRP"].update({'nHSRPall' : nHSRPall})
 
-print(json.dumps(data, indent = 4))
+#print(json.dumps(data, indent = 4))
 
+workbook = xlwt.Workbook()
+XL = workbook.add_sheet('NMP-PRE')
+XL.write(0, 0, 'Hostname')
+XL.write(0, 1, 'Version')
+XL.write(0, 2, 'nSUP720')
+XL.write(0, 3, 'nLC6704')
+XL.write(0, 4, 'nLC6748')
+XL.write(0, 5, 'nCR03')
+XL.write(0, 6, 'nCR02')
+XL.write(0, 7, 'nSR0i')
+XL.write(0, 8, 'nASR0i')
+XL.write(0, 9, 'nXSW0i')
+XL.write(0, 10, 'nHSRPact')
+XL.write(0, 11, 'nHSRPstb')
+XL.write(0, 12, 'nHSRPall')
 
+row = 1
+col = 0
+for host in data.keys():
+    XL.write(row, col, host)
+    print host
+    XL.write(row, col + 1, data[host].get('VERSION'))
+    XL.write(row, col + 2, data[host].get('MODULE', {}).get('nSUP720', 'NA'))
+    XL.write(row, col + 3, data[host].get('MODULE', {}).get('nLC6704', 'NA'))
+    XL.write(row, col + 4, data[host].get('MODULE', {}).get('nLC6748', 'NA'))
+    XL.write(row, col + 5, data[host].get('CDP', {}).get('nCR03', 'NA'))
+    XL.write(row, col + 6, data[host].get('CDP', {}).get('nCR02', 'NA'))
+    XL.write(row, col + 7, data[host].get('CDP', {}).get('nSR0i', 'NA'))
+    XL.write(row, col + 8, data[host].get('CDP', {}).get('nASR0i', 'NA'))
+    XL.write(row, col + 9, data[host].get('CDP', {}).get('nXSW0i', 'NA'))
+    XL.write(row, col + 10, data[host].get('HSRP', {}).get('nHSRPact', 'NA'))
+    XL.write(row, col + 11, data[host].get('HSRP', {}).get('nHSRPstb', 'NA'))
+    XL.write(row, col + 12, data[host].get('HSRP', {}).get('nHSRPall', 'NA'))
+    row += 1
+workbook.save('mgts-nmp-py-test-3.xls')
 
 
 
