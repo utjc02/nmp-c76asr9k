@@ -158,6 +158,8 @@ XL.write(0, 10, 'nHSRPact')
 XL.write(0, 11, 'nHSRPstb')
 XL.write(0, 12, 'nHSRPall')
 
+
+
 row = 1
 col = 0
 for host in data.keys():
