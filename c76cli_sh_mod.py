@@ -158,6 +158,7 @@ font0.height = 240
 
 align0 = xlwt.Alignment()
 align0.horz = xlwt.Alignment.HORZ_CENTER
+align0.horz = xlwt.Alignment.VERT_CENTER
 
 pattern0 = xlwt.Pattern()
 pattern0.pattern = xlwt.Pattern.SOLID_PATTERN
@@ -201,6 +202,7 @@ style1 = xlwt.XFStyle()
 style1.font = font1
 style1.alignment = align1
 
+## WRITE SHEET HEADER
 XL.write_merge(0, 1, 0, 0, 'Hostname', style0)
 XL.write_merge(0, 1, 1, 1, 'Version', style0)
 XL.write_merge(0, 0, 2, 4, 'Platform', style0)
@@ -219,7 +221,7 @@ XL.write(1, 10, 'nHSRPact', style0)
 XL.write(1, 11, 'nHSRPstb', style0)
 XL.write(1, 12, 'nHSRPall', style0)
 
-
+## WRITE SHEET DATA
 row = 2
 col = 0
 for host in data.keys():
@@ -237,6 +239,8 @@ for host in data.keys():
     XL.write(row, col + 11, data[host].get('HSRP', {}).get('nHSRPstb', 'N/A'), style1)
     XL.write(row, col + 12, data[host].get('HSRP', {}).get('nHSRPall', 'N/A'), style1)
     row += 1
+
+## SAVE FILE
 wb.save("mgts-nmp-py-test-style-3.xls")
 
 
