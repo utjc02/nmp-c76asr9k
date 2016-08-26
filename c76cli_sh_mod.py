@@ -158,7 +158,7 @@ font0.height = 240
 
 align0 = xlwt.Alignment()
 align0.horz = xlwt.Alignment.HORZ_CENTER
-align0.horz = xlwt.Alignment.VERT_CENTER
+align0.vert = xlwt.Alignment.VERT_CENTER
 
 pattern0 = xlwt.Pattern()
 pattern0.pattern = xlwt.Pattern.SOLID_PATTERN
