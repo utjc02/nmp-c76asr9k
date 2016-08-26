@@ -38,8 +38,11 @@ for inSubDir in os.walk(inDir):
     pathFull = inSubDir[0]
     path, file = os.path.split(pathFull)
     file = os.path.splitext(file)[0]
-    node = file
-    data[node] = {}
+
+    m = re.search('a\d\d\d\-(asr)|(xsw)|(sr)|(cr)0[123]', file)
+    if m:
+        node = file
+        data[node] = {}
 
     for inFileName in inSubDir[2]:
         inFile = open(pathFull + "/" + inFileName)
@@ -142,43 +145,99 @@ for inSubDir in os.walk(inDir):
 
 #print(json.dumps(data, indent = 4))
 
-workbook = xlwt.Workbook()
-XL = workbook.add_sheet('NMP-PRE')
-XL.write(0, 0, 'Hostname')
-XL.write(0, 1, 'Version')
-XL.write(0, 2, 'nSUP720')
-XL.write(0, 3, 'nLC6704')
-XL.write(0, 4, 'nLC6748')
-XL.write(0, 5, 'nCR03')
-XL.write(0, 6, 'nCR02')
-XL.write(0, 7, 'nSR0i')
-XL.write(0, 8, 'nASR0i')
-XL.write(0, 9, 'nXSW0i')
-XL.write(0, 10, 'nHSRPact')
-XL.write(0, 11, 'nHSRPstb')
-XL.write(0, 12, 'nHSRPall')
+wb = xlwt.Workbook()
+XL = wb.add_sheet('NMP-PRE')
+
+## HEADER
+
+font0 = xlwt.Font()
+font0.name = 'Arial'
+font0.colour_index = xlwt.Style.colour_map['blue']
+font0.bold = True
+font0.height = 240
+
+align0 = xlwt.Alignment()
+align0.horz = xlwt.Alignment.HORZ_CENTER
+
+pattern0 = xlwt.Pattern()
+pattern0.pattern = xlwt.Pattern.SOLID_PATTERN
+pattern0.pattern_fore_colour = xlwt.Style.colour_map['pale_blue']
+
+style0 = xlwt.XFStyle()
+style0.font = font0
+style0.alignment = align0
+style0.pattern = pattern0
+
+## HOSTNAME
+font2 = xlwt.Font()
+font2.name = 'Arial'
+font2.colour_index = xlwt.Style.colour_map['black']
+font2.bold = True
+font2.height = 240
+
+align2 = xlwt.Alignment()
+align2.horz = xlwt.Alignment.HORZ_CENTER
+
+pattern2 = xlwt.Pattern()
+pattern2.pattern = xlwt.Pattern.SOLID_PATTERN
+pattern2.pattern_fore_colour = xlwt.Style.colour_map['gray25']
+
+style2 = xlwt.XFStyle()
+style2.font = font2
+style2.alignment = align2
+style2.pattern = pattern2
+
+## NORMAL
+font1 = xlwt.Font()
+font1.name = 'Arial'
+font1.colour_index = xlwt.Style.colour_map['black']
+font1.bold = False
+font1.height = 240
+
+align1 = xlwt.Alignment()
+align1.horz = xlwt.Alignment.HORZ_RIGHT
+
+style1 = xlwt.XFStyle()
+style1.font = font1
+style1.alignment = align1
+
+XL.write_merge(0, 1, 0, 0, 'Hostname', style0)
+XL.write_merge(0, 1, 1, 1, 'Version', style0)
+XL.write_merge(0, 0, 2, 4, 'Platform', style0)
+XL.write_merge(0, 0, 5, 9, 'CDP', style0)
+XL.write_merge(0, 0, 10, 12, 'HSRP', style0)
+
+XL.write(1, 2, 'nSUP720', style0)
+XL.write(1, 3, 'nLC6704', style0)
+XL.write(1, 4, 'nLC6748', style0)
+XL.write(1, 5, 'nCR03', style0)
+XL.write(1, 6, 'nCR02', style0)
+XL.write(1, 7, 'nSR0i', style0)
+XL.write(1, 8, 'nASR0i', style0)
+XL.write(1, 9, 'nXSW0i', style0)
+XL.write(1, 10, 'nHSRPact', style0)
+XL.write(1, 11, 'nHSRPstb', style0)
+XL.write(1, 12, 'nHSRPall', style0)
 
 
-
-row = 1
+row = 2
 col = 0
 for host in data.keys():
-    XL.write(row, col, host)
-    print host
-    XL.write(row, col + 1, data[host].get('VERSION'))
-    XL.write(row, col + 2, data[host].get('MODULE', {}).get('nSUP720', 'NA'))
-    XL.write(row, col + 3, data[host].get('MODULE', {}).get('nLC6704', 'NA'))
-    XL.write(row, col + 4, data[host].get('MODULE', {}).get('nLC6748', 'NA'))
-    XL.write(row, col + 5, data[host].get('CDP', {}).get('nCR03', 'NA'))
-    XL.write(row, col + 6, data[host].get('CDP', {}).get('nCR02', 'NA'))
-    XL.write(row, col + 7, data[host].get('CDP', {}).get('nSR0i', 'NA'))
-    XL.write(row, col + 8, data[host].get('CDP', {}).get('nASR0i', 'NA'))
-    XL.write(row, col + 9, data[host].get('CDP', {}).get('nXSW0i', 'NA'))
-    XL.write(row, col + 10, data[host].get('HSRP', {}).get('nHSRPact', 'NA'))
-    XL.write(row, col + 11, data[host].get('HSRP', {}).get('nHSRPstb', 'NA'))
-    XL.write(row, col + 12, data[host].get('HSRP', {}).get('nHSRPall', 'NA'))
+    XL.write(row, col, host, style2)
+    XL.write(row, col + 1, data[host].get('VERSION'), style1)
+    XL.write(row, col + 2, data[host].get('MODULE', {}).get('nSUP720', 'N/A'), style1)
+    XL.write(row, col + 3, data[host].get('MODULE', {}).get('nLC6704', 'N/A'), style1)
+    XL.write(row, col + 4, data[host].get('MODULE', {}).get('nLC6748', 'N/A'), style1)
+    XL.write(row, col + 5, data[host].get('CDP', {}).get('nCR03', 'N/A'), style1)
+    XL.write(row, col + 6, data[host].get('CDP', {}).get('nCR02', 'N/A'), style1)
+    XL.write(row, col + 7, data[host].get('CDP', {}).get('nSR0i', 'N/A'), style1)
+    XL.write(row, col + 8, data[host].get('CDP', {}).get('nASR0i', 'N/A'), style1)
+    XL.write(row, col + 9, data[host].get('CDP', {}).get('nXSW0i', 'N/A'), style1)
+    XL.write(row, col + 10, data[host].get('HSRP', {}).get('nHSRPact', 'N/A'), style1)
+    XL.write(row, col + 11, data[host].get('HSRP', {}).get('nHSRPstb', 'N/A'), style1)
+    XL.write(row, col + 12, data[host].get('HSRP', {}).get('nHSRPall', 'N/A'), style1)
     row += 1
-workbook.save('mgts-nmp-py-test-3.xls')
+wb.save("mgts-nmp-py-test-style-3.xls")
 
 
 
